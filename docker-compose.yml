@@ -1,0 +1,32 @@
+services:
+
+  mysql-db:
+    image: mysql:8
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: studentdb
+    ports:
+      - "3307:3306"
+    networks:
+      - student-network
+
+  student-app:
+    build: .
+    container_name: student-app
+    restart: always
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/studentdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - mysql-db
+    networks:
+      - student-network
+
+networks:
+  student-network:
+    driver: bridge
